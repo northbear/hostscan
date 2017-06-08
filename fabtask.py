@@ -4,8 +4,14 @@ from collections import namedtuple
 
 from fabric.api   import env, settings, task, local, run 
 # from fabric       import state
-# from fabric.tasks import execute
+from fabric.tasks import execute
 
+import json
+
+
+class Query:
+    Local  = 1
+    Remote = 2
 
 @task
 def empty():
@@ -37,24 +43,39 @@ def getmeminfo():
         return run("head -n 1 /proc/meminfo")
 
 def resolve_info(inp):
-    info = {}
-    data = inp.split()
-    info['fqdn'] = data[0]
-    info['ip'] = data[-1]
-    return info
+    rec = inp.split()
+    return { 'fqdn':rec[0], 'ip':rec[-1]}
     
 def uptime_info(inp):
     return { 'uptime': inp }
 
-def empty_info(imp):
+def empty_info(inp):
     return {}
 
-HostState = namedtuple('HostState','name action info' )
+@task
+def query_local(cmd):
+    with settings(warn_only=True):
+        return local(cmd, capture=True)
 
-Initial = HostState('UNKNOWN', empty, empty_info)
-Resolvable = HostState('RESOLVABLE', resolve, resolve_info)
-Reachable = HostState('REACHABLE', ping, empty_info)
-Accessible = HostState('ACCESSIBLE', sshaccess, uptime_info)
+@task
+def query_remote(cmd):
+    with settings(warn_only=True):
+        return run("head -n 1 /proc/meminfo")
 
-HostStates = [Resolvable, Reachable, Accessible]
+@task
+def query(req):
+    with settings(warn_only=True):
+        if req[0] == Query.Local:
+            return local(req[1], capture=True)
+        else:
+            return run(req[1])
+        
+@task
+def statistic(stats, db):
+    for stat in stats:
+        if env.host not in db:
+            db[env.host] = {}
+        s = stat(env.host, db[env.host])
+        s.run()
+
 
