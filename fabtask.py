@@ -9,7 +9,7 @@ from fabric.tasks import execute
 import json
 
 
-class Query:
+class QueryType:
     Local  = 1
     Remote = 2
 
@@ -65,7 +65,7 @@ def query_remote(cmd):
 @task
 def query(req):
     with settings(warn_only=True):
-        if req[0] == Query.Local:
+        if req[0] == QueryType.Local:
             return local(req[1], capture=True)
         else:
             return run(req[1])

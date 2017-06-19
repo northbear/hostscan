@@ -30,17 +30,17 @@ class DcimApi:
     def departments(self):
         return self.__getdict(self.request('department'), 'department')
 
-def servedDepartments():
-    return {13, 12, 3, 9, 2, 8, 6, 1, 10, 11, 7, 4}
+class FilterInfo:
+    def servedDepartments(self):
+        return {13, 12, 3, 9, 2, 8, 6, 1, 10, 11, 7, 4}
+
+    def getServedServers(self, dev):
+        return ( info['Label'].lower() for info in dev if info['DeviceType'] == 'Server' and info['Owner'] in self.servedDepartments() )
+
 
 
 def print_pretty(data):
     print(json.dumps(data, indent=2))
-
-def getServedHosts(dev):
-    return ( info['Label'].lower() for info in dev if info['DeviceType'] == 'Server' and info['Owner'] in servedDepartments() )
-
-#  || info['Owner'] in servedDepartments()
 
 def main():
     dcim = DcimApi()
@@ -50,7 +50,7 @@ def main():
     # print_pretty(devinfo)
     # print_pretty(dcim.request('department'))
     # print_pretty(dcim.departments())
-    for h in getServedHosts(devinfo):
+    for h in FilterInfo().getServedServers(devinfo):
        print h
 
 
