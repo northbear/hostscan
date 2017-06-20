@@ -82,6 +82,22 @@ class HostMem(Catcher):
         row = inp.split()
         return { 'ram': row[1].strip() }
 
+class HostHCAs(Catcher):
+    def condition(self):
+        return self._db.get('status', '') == 'REACHABLE'
+
+    def querystr(self):
+        return (QueryType.Remote, "ibstat | grep 'CA type'")
+    
+    def postprocess(self, inp):
+        values = [] 
+        for row in inp.split('\n'):
+            try:
+                values.append(row.split(':')[1].strip())
+            except IndexError:
+                pass
+        return { 'hcas': ';'.join(values) }
+
 class HostUsers(Catcher):
     def condition(self):
         return True 
@@ -93,8 +109,6 @@ class HostUsers(Catcher):
     def postprocess(self, inp):
         return { 'user_activity': inp }
 
-
-
 class HostUptime(Catcher):
     def condition(self):
         return self._db.get('status', '') == 'REACHABLE'
@@ -105,4 +119,4 @@ class HostUptime(Catcher):
     def postprocess(self, inp):
         return { 'uptime': inp }
 
-stats = [ HostResolve, HostReach, HostCPU, HostMem ]
+stats = [ HostResolve, HostReach, HostCPU, HostMem, HostHCAs ]
