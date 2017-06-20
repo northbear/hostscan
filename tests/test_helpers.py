@@ -1,6 +1,7 @@
 ##
 
 from helpers import parselastrows
+from helpers import reducelastrows
 from helpers import parselastrecord
 
 from unittest import TestCase
@@ -18,10 +19,23 @@ class TestParseLastRows(TestCase):
         outp = parselastrows(self.testdata)
         self.assertEqual(2366, len(outp))
 
+class TestReduceLastRows(TestCase):
+    def setUp(self):
+        with open('tests/data/last.input') as f:
+            self.testdata = f.read()
+        self.rows = parselastrows(self.testdata)
+
+    def test_reducerows(self):
+        rows = reducelastrows(self.rows)
+        self.assertEqual(2326, len(rows))
+
+
 class TestParseLastRecord(TestCase):
     def setUp(self):
         with open('tests/data/last.input') as f:
-            self.testdata = f.readline()
+            rows = parselastrows(f.read())
+            reduced = reducelastrows(rows)
+            self.testdata = reduced[0]
 
     def test_returns_dict(self):
         self.assertIsInstance(parselastrecord(''), dict)
@@ -33,13 +47,14 @@ class TestParseLastRecord(TestCase):
     def test_parse_simple_data(self):
         rec = parselastrecord(self.testdata)
         user, console, frm = rec['user'], rec['console'], rec['from'] 
-        self.assertEqual((user, console, frm), ('alinas', 'pts/124', '10.223.3.114'))
+        self.assertEqual((user, console, frm), ('boriska', 'pts/70', ':pts/110:S.1'))
 
     def test_parse_logintime(self):
         rec = parselastrecord(self.testdata)
-        # print self.testdata
-        self.assertEqual(rec['logintime'], 'Mon Jun 19 09:44')
+        curr_year = datetime.now().year
+        self.assertEqual(rec['logintime'], datetime(curr_year, 06, 19, 6, 4))
+        # self.assertEqual(rec['logintime'], 'Mon Jun 19 06:04')
 
-
+    
 
         
