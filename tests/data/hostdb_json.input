@@ -1,0 +1,32 @@
+{
+  "r-ufm189": {
+    "status": "UNKNOWN"
+  }, 
+  "hpchead": {
+    "status": "REACHABLE", 
+    "hcas": "[408] umad_init;[408] main", 
+    "owner": "HPC", 
+    "ip": "10.209.44.59", 
+    "ram": "62", 
+    "cpu": "Intel(R) Xeon(R) CPU E5-2680 0 @ 2.70GHz", 
+    "fqdn": "hpchead.mtr.labs.mlnx"
+  }, 
+  "hpc-master": {
+    "status": "REACHABLE", 
+    "hcas": "MT4099", 
+    "owner": "HPC", 
+    "ip": "10.209.44.117", 
+    "ram": "125", 
+    "cpu": "Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz", 
+    "fqdn": "hpc-master.mtr.labs.mlnx"
+  }, 
+  "r-softiron-01": {
+    "status": "REACHABLE", 
+    "hcas": "ibstat", 
+    "owner": "Storage iSER", 
+    "ip": "10.209.40.13", 
+    "ram": "15", 
+    "cpu": "", 
+    "fqdn": "r-softiron-01.mtr.labs.mlnx"
+  }
+}

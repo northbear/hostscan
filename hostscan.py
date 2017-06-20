@@ -2,8 +2,14 @@
 ##
 
 from __future__ import print_function
+
+import locale 
+
 from fabric import tasks
 from fabric.api import env
+from fabric.exceptions import NetworkError
+
+from hostdb import HostDB
 
 import sys
 import json
@@ -14,24 +20,8 @@ import odcim
 def gatherStats(stats, dbhost):
     pass
 
-class HostDB:
-    def __init__(self, lst=[]):
-        self.db = {}
-        for item in lst:
-            self.db[item] = {}
-    
-    def remove(self, items):
-        for it in items:
-            self.db.pop(it, 0)
-
-    def update(self, dct):
-        for it in dct:
-            if it in self.db:
-                self.db[it].update(dct[it])
-                
-
 def json_print(jsn):
-    return json.dumps(jsn, indent = 2, sort_keys=True)
+    return json.dumps(jsn, indent = 2)
 
 def usage_msg():
     print("Usage: %s [all|test] [<file>]" % sys.argv[0])
@@ -57,6 +47,7 @@ def getowner(devinfo, dept):
 
 def main():
 
+
     if len(sys.argv) == 1:
         usage_msg()
         exit()
@@ -81,13 +72,17 @@ def main():
     ownerinfo = getowner(devinfo, dept)
 
 
-    exclude_hosts = ['dev-r-vrt-100', 'r-ufm89', 'r-ufm88', 'rsws09']
+    exclude_hosts = ['dev-r-vrt-010', 'dev-r-vrt-011', 'dev-r-vrt-012', 'dev-r-vrt-013', 'dev-r-vrt-100', 'r-ufm89', 'r-aa-fatty10', 'hpc-arm-03', 'r-ufm116', 'r-ole17', 'r-ufm118', 'r-ufm88', 'rsws09']
 
     # print(json_print(dbhost.db))
     # return
 
+    ## Configure fabric
+    ## env.eagerly_disconnect = True
+    ## env.parallel = True
     env.commands = False
     env.user = 'root'
+
     test_hosts = ['hpchead', 'hpc-master', 'r-softiron-01', 'r-ufm189']
 
     if hosts_set == 'all':
@@ -100,22 +95,25 @@ def main():
 
     host_list = dbhost.db.keys()
 
-    for hst in host_list:
-        try:
-            tasks.execute(fabtask.statistic, catchinfo.stats, dbhost.db, hosts=hst)
-            print("Scanning complete. Writing info to file %s" % outp_file)
-        except:
-            print("Scanning failed. Trying to write results to file %s" % outp_file)
-        finally:
-            result = json_print(dbhost.db)
-
+    try:
+        count = 1
+        for hst in host_list:
             try:
-                with open(outp_file, 'w') as outp:
-                    print(result, file=outp)
-            except IOError as err:
-                print("Error: cannot write info to file %s" % outp_file)
+                print("count: %s" % count)
+                tasks.execute(fabtask.statistic, catchinfo.stats, dbhost.db, hosts=hst)
+                count += 1
+            except NetworkError as nerr:
+                print("Scanning %s failed. Go for scanning next host" % hst)
+            except EOFError:
+                pass
+    finally:
+        try:
+            with open(outp_file, 'w') as outp:
+                dbhost.store(outp)
+        except IOError as err:
+            print("Error: cannot write results to file")
     
-    print("Complete...")
+    print("Complete!")
 
 if __name__ == '__main__':
     main()
