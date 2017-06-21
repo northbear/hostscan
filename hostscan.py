@@ -62,14 +62,14 @@ def main():
         outp_file = sys.argv[2]
 
 
-    dcim = odcim.DcimApi()
-    filter = odcim.FilterInfo()
+    # dcim = odcim.DcimApi()
+    # filter = odcim.FilterInfo()
 
-    devinfo = dcim.devices()
-    deptinfo = dcim.departments()
+    # devinfo = dcim.devices()
+    # deptinfo = dcim.departments()
 
-    dept = makedept(deptinfo)
-    ownerinfo = getowner(devinfo, dept)
+    # dept = makedept(deptinfo)
+    # ownerinfo = getowner(devinfo, dept)
 
 
     exclude_hosts = ['dev-r-vrt-010', 'dev-r-vrt-011', 'dev-r-vrt-012', 'dev-r-vrt-013', 'dev-r-vrt-100', 'r-ufm89', 'r-aa-fatty10', 'hpc-arm-03', 'r-ufm116', 'r-ole17', 'r-ufm118', 'r-ufm88', 'rsws09']
@@ -86,12 +86,16 @@ def main():
     test_hosts = ['hpchead', 'hpc-master', 'r-softiron-01', 'r-ufm189']
 
     if hosts_set == 'all':
-        dbhost = HostDB(filter.getServedServers(devinfo))
+        # dbhost = HostDB(filter.getServedServers(devinfo))
+        dbhost = HostDB('results/host170620bis.json')
     else:
         dbhost = HostDB(test_hosts)
         
     dbhost.remove(exclude_hosts)
-    dbhost.update(ownerinfo)
+    # dbhost.update(ownerinfo)
+
+    # dbhost.store(sys.stdout)
+    # exit()
 
     host_list = dbhost.db.keys()
 
