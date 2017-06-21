@@ -7,6 +7,8 @@ from fabric.api import execute
 
 import fabtask
 from fabtask import QueryType
+from helpers import parselastrows, reducelastrows, parselastrecord, getstat, stat2string
+
 
 class Catcher:
     def __init__(self, hostname, db):
@@ -107,7 +109,12 @@ class HostUsers(Catcher):
         return (QueryType.Remote, "last")
     
     def postprocess(self, inp):
-        return { 'user_activity': inp }
+        rows = reducelastrows(parselastrows(inp))
+        rec = []
+        for row in rows:
+            rec.append(parselastrecord(row))
+        stat = getstat(rec)
+        return { 'user_activity': stat2string(stat) }
 
 class HostUptime(Catcher):
     def condition(self):
@@ -119,4 +126,4 @@ class HostUptime(Catcher):
     def postprocess(self, inp):
         return { 'uptime': inp }
 
-stats = [ HostResolve, HostReach, HostCPU, HostMem, HostHCAs ]
+stats = [ HostResolve, HostReach, HostCPU, HostMem, HostHCAs, HostUsers ]
