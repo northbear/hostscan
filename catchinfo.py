@@ -7,7 +7,8 @@ from fabric.api import execute
 
 import fabtask
 from fabtask import QueryType
-from helpers import parselastrows, reducelastrows, parselastrecord, getstat, stat2string
+from helpers import parselastrows, reducelastrows, parselastrecord 
+from helpers import getstat, stat2string, trimelderrecs
 
 
 class Catcher:
@@ -103,7 +104,6 @@ class HostHCAs(Catcher):
 class HostUsers(Catcher):
     def condition(self):
         return True 
-## self._db.get('status', '') == 'REACHABLE'
 
     def querystr(self):
         return (QueryType.Remote, "last")
@@ -113,7 +113,8 @@ class HostUsers(Catcher):
         rec = []
         for row in rows:
             rec.append(parselastrecord(row))
-        stat = getstat(rec)
+        days = 15
+        stat = getstat(trimelderrecs(rec, 15))
         return { 'user_activity': stat2string(stat) }
 
 class HostUptime(Catcher):
