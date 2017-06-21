@@ -3,7 +3,7 @@
 
 from helpers import parselastrows
 from helpers import reducelastrows
-from helpers import parselastrecord, getstat, stat2string
+from helpers import parselastrecord, getstat, stat2string, trimelderrecs
 
 from unittest import TestCase
 from datetime import datetime, timedelta
@@ -106,3 +106,18 @@ class TestStat2String(TestCase):
 
     def test_multiple_row_string(self):
         self.assertEqual(stat2string([self.user_root, self.user_others]), "root:10|0:10:00;others:300|5:30:30")
+
+class TestTrimRows(TestCase):
+    def setUp(self):
+        rows, self.recs = [], []
+        with open('tests/data/last.input') as f:
+            rows = parselastrows(f.read())
+        reduced = reducelastrows(rows)
+        for row in reduced:
+            self.recs.append(parselastrecord(row))
+        self.curr_data = self.recs[0]['logintime']
+
+    def test_trim_old_records(self):
+        days = 10
+        trimmed = trimelderrecs(self.recs, days) 
+        self.assertGreater(trimmed[-1]['logintime'], self.curr_data - timedelta(days))

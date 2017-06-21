@@ -56,3 +56,14 @@ def stat2string(inp):
         if isinstance(item, dict):
             resp.append("%s:%s|%s" % (item.get('user', ''), item.get('amount', ''), item.get('duration', '')))
     return ';'.join(resp)
+
+def trimelderrecs(recs, days, curtime = datetime.now()):
+    last = 0
+    delta = timedelta(days)
+    bound_time = curtime - delta
+    for rec in recs:
+        last += 1
+        if rec['logintime'] < bound_time:
+            break
+    return recs[0:last]
+
