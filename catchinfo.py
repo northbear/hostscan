@@ -103,7 +103,7 @@ class HostHCAs(Catcher):
 
 class HostUsers(Catcher):
     def condition(self):
-        return True 
+        return self._db.get('status', '') == 'REACHABLE'
 
     def querystr(self):
         return (QueryType.Remote, "last")
