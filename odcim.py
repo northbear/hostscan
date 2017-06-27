@@ -30,6 +30,14 @@ class DcimApi:
     def departments(self):
         return self.__getdict(self.request('department'), 'department')
 
+
+class HostDBFromDcim(dict):
+    def __init__(self, devs, depts):
+        for d in devs: 
+            if d['DeviceType'] == 'Server':
+                 self.update({ d['Label'].lower(): {} })
+
+
 class FilterInfo:
     def servedDepartments(self):
         return {13, 12, 3, 9, 2, 8, 6, 1, 10, 11, 7, 4}

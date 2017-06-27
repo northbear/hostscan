@@ -1,0 +1,106 @@
+[
+  {
+    "DeptID": "5", 
+    "Name": "DPDK", 
+    "Classification": "ITS", 
+    "DeptColor": "#EB1D3C", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "13", 
+    "Name": "Drivers", 
+    "Classification": "ITS", 
+    "DeptColor": "#E6AACF", 
+    "ExecSponsor": "", 
+    "SDM": "Moni Shua"
+  }, 
+  {
+    "DeptID": "12", 
+    "Name": "FreeBSD", 
+    "Classification": "ITS", 
+    "DeptColor": "#86E086", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "3", 
+    "Name": "HPC", 
+    "Classification": "ITS", 
+    "DeptColor": "#DB3DD3", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "9", 
+    "Name": "i-UFM", 
+    "Classification": "ITS", 
+    "DeptColor": "#E7ED7D", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "2", 
+    "Name": "Lab IT", 
+    "Classification": "ITS", 
+    "DeptColor": "#2B2BE3", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "8", 
+    "Name": "OpenSM", 
+    "Classification": "ITS", 
+    "DeptColor": "#325E2C", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "6", 
+    "Name": "SHArP", 
+    "Classification": "ITS", 
+    "DeptColor": "#039E9E", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "1", 
+    "Name": "Software Solutions", 
+    "Classification": "Internal", 
+    "DeptColor": "#FFFFFF", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "10", 
+    "Name": "Storage Ceph", 
+    "Classification": "ITS", 
+    "DeptColor": "#FF9100", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "11", 
+    "Name": "Storage iSER", 
+    "Classification": "ITS", 
+    "DeptColor": "#DEC71D", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "7", 
+    "Name": "UFM", 
+    "Classification": "ITS", 
+    "DeptColor": "#FCFC00", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }, 
+  {
+    "DeptID": "4", 
+    "Name": "VMA", 
+    "Classification": "ITS", 
+    "DeptColor": "#8FF511", 
+    "ExecSponsor": "", 
+    "SDM": ""
+  }
+]
