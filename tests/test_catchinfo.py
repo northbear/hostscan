@@ -36,5 +36,5 @@ class TestHostUsers(TestCase):
         
     def test_postprocess_content(self):
         resp = self.hostlast.postprocess(self.input)
-        self.assertEqual(resp['user_activity'], 'root:69|1 day, 1:20:00;others:1647|361 days, 0:50:00')
+        self.assertEqual(resp['user_activity'], 'root:56|0:00:00;others:781|162 days, 17:12:00')
         
