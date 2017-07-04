@@ -33,11 +33,25 @@ class DcimApi:
 
 class HostDBFromDcim(dict):
     def __init__(self, devs, depts):
+        self.dictionaries = {}
+
+        self.dictionaries['owner'] = {}
+        for dept in depts:
+            print dept['Name']
+            self.dictionaries['owner'][dept['DeptID']] = dept['Name']
+
         for d in devs: 
             if d['DeviceType'] == 'Server':
                  self.update({ d['Label'].lower(): {} })
 
-
+    def makerec(self, rec, dcts):
+        print rec['Owner'], dcts
+        resp = {}
+        resp['host'] = ''
+        resp['owner'] = dcts['owner'].get(str(rec['Owner']), 'unknown')
+        resp['type'] = ''
+        return resp
+    
 class FilterInfo:
     def servedDepartments(self):
         return {13, 12, 3, 9, 2, 8, 6, 1, 10, 11, 7, 4}

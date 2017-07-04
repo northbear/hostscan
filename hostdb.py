@@ -32,3 +32,18 @@ class HostDB:
         if isinstance(f, file):
             self.db = json.load(f)
 
+    def select(self, query):
+        result = { key: value for (key, value) in self.db.items() if dict_in(query, value) }
+        return result
+        
+
+def dict_in(d1, d2):
+    if not (isinstance(d1, dict) and isinstance(d2, dict)):
+        return False
+    for (key, value) in d1.items():
+        try:
+            if d2[key] != value:
+                return False
+        except KeyError:
+            return False
+    return True
