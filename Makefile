@@ -3,7 +3,7 @@
 .PHONY: clean test
 
 clean:
-	@if [ -f *.pyc ]; then rm *.pyc; fi
+	@rm *.pyc
 
 test:
 	python -m unittest discover -s tests
