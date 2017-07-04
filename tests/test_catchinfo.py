@@ -26,6 +26,10 @@ class TestHostUsers(TestCase):
         with open('tests/data/last.input') as f:
             self.input = f.read()
             
+    def test_querystr(self):
+        tq, sq = self.hostlast.querystr() 
+        self.assertEqual(sq, 'last -FR')
+
     def test_postprocess_returns_dict(self):
         resp = self.hostlast.postprocess('')
         self.assertIsInstance(resp, dict) 
@@ -36,5 +40,5 @@ class TestHostUsers(TestCase):
         
     def test_postprocess_content(self):
         resp = self.hostlast.postprocess(self.input)
-        self.assertEqual(resp['user_activity'], 'root:56|0:00:00;others:781|162 days, 17:12:00')
+        self.assertEqual(resp['user_activity'], 'root:2|0:00:00;others:151|23 days, 0:47:00')
         

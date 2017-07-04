@@ -106,7 +106,7 @@ class HostUsers(Catcher):
         return self._db.get('status', '') == 'REACHABLE'
 
     def querystr(self):
-        return (QueryType.Remote, "last")
+        return (QueryType.Remote, "last -FR")
     
     def postprocess(self, inp):
         rows = reducelastrows(parselastrows(inp))
