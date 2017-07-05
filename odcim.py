@@ -37,19 +37,18 @@ class HostDBFromDcim(dict):
 
         self.dictionaries['owner'] = {}
         for dept in depts:
-            print dept['Name']
             self.dictionaries['owner'][dept['DeptID']] = dept['Name']
 
         for d in devs: 
             if d['DeviceType'] == 'Server':
-                 self.update({ d['Label'].lower(): {} })
+                 self.update({ d['Label'].lower(): self.makerec(d, self.dictionaries) })
 
     def makerec(self, rec, dcts):
-        print rec['Owner'], dcts
+        # print rec['Owner'], dcts
         resp = {}
-        resp['host'] = ''
+        resp['host'] = rec['Label'].lower()
         resp['owner'] = dcts['owner'].get(str(rec['Owner']), 'unknown')
-        resp['type'] = ''
+        resp['type'] = rec['DeviceType'].lower()
         return resp
     
 class FilterInfo:

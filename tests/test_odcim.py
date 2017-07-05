@@ -19,7 +19,7 @@ class TestHostDBFromDcim(TestCase):
         self.assertIn('ajna01', self.hostdb.keys())
 
     def test_dictionaries(self):
-        self.assertEqual(set({}), set(self.hostdb.dictionaries.keys()))
+        self.assertEqual(set(['owner']), set(self.hostdb.dictionaries.keys()))
 
     def test_owner_dictionaries(self):
         self.assertIn('owner', set(self.hostdb.dictionaries.keys()))
@@ -29,20 +29,29 @@ class TestDCimToHostDBRec(TestCase):
     def setUp(self):
         with open('tests/data/dcim_devices.json') as f:
             self.devices = json.load(f)
-        with open('tests/data/odcim_depts.json') as f:
+        with open('tests/data/dcim_depts.json') as f:
             self.depts = json.load(f)
         self.hostdb = HostDBFromDcim(self.devices, self.depts)
 
     def test_return_dict(self):
-        result = self.hostdb.makerec(self.devices[0], self.hostdb.dictionaries)
+        result = self.hostdb.makerec(self.devices[2], self.hostdb.dictionaries)
         self.assertIsInstance(result, dict)
 
     def test_rec_has_fields(self):
-        result = self.hostdb.makerec(self.devices[0], self.hostdb.dictionaries)
+        result = self.hostdb.makerec(self.devices[2], self.hostdb.dictionaries)
+        print result
         self.assertEqual(set(['host', 'owner', 'type']), set(result.keys())) 
         
     def test_rec_store_owner(self):
-        result = self.hostdb.makerec(self.devices[0], self.hostdb.dictionaries)
-        self.assertEqual(result['owner'], 'xxx') 
+        result = self.hostdb.makerec(self.devices[2], self.hostdb.dictionaries)
+        self.assertEqual(result['owner'], 'SHArP') 
+        
+    def test_rec_store_host(self):
+        result = self.hostdb.makerec(self.devices[2], self.hostdb.dictionaries)
+        self.assertEqual(result['host'], 'ajna01') 
+        
+    def test_rec_store_type(self):
+        result = self.hostdb.makerec(self.devices[2], self.hostdb.dictionaries)
+        self.assertEqual(result['type'], 'server') 
         
 
