@@ -1,6 +1,8 @@
 ##
 ##
-from fabric.api import task, local, run
+from fabric.api import task, local, run, env
+
+# env.use_ssh_config = True
 
 
 def dello():
@@ -28,7 +30,10 @@ def getStatus():
     status = None
     if resolvable():
         status = 'RESOLVABLE'
-    else if  reachable():
+    elif  reachable():
         status = 'REACHABLE'
     print "Server %s status is %s" % (env.host, status)
 
+def uname():
+    resp = run('uname -a')
+    return resp
