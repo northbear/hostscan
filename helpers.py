@@ -15,26 +15,23 @@ def reducelastrows(inp):
 
 def parselastrecord(inp):
     data = inp.split()
-    user, console, frm, logintime, duration = '', '', '', '', ''
-    try:
-        if 'system' in data[1]:
-            data[1] = ' '.join(data[1:3])
-            data.pop(2)
-        user, console, frm = data[0], data[1], data[2]
+    user, console, logintime, duration = '', '', '', ''
+    
+    # data[1] = ' '.join(data[1:3])
+    # data.pop(2)
+    user, console = data[0], data[1]
 
-        logintime = datetime.strptime(' '.join(data[3:7]), "%a %b %d %H:%M")
-        logintime = logintime.replace(year=datetime.now().year)
+    logintime = datetime.strptime(' '.join(data[3:7]), "%b %d %H:%M:%S %Y")
+    logintime = logintime.replace(year=datetime.now().year)
 
-        duration = data[9][1:-1]
-        if '+' in duration:
-            day, tme = duration.split('+')
-        else:
-            day, tme = '0', duration
-        hour, minute = tme.split(':')
-        duration = timedelta(int(day), 0, 0, 0, int(minute), int(hour))
-    except IndexError:
-        pass
-    dct = { 'user': user, 'console': console, 'from': frm, 'logintime': logintime, 'duration': duration }
+    duration = data[-1][1:-1]
+    if '+' in duration:
+        day, tme = duration.split('+')
+    else:
+        day, tme = '0', duration
+    hour, minute = tme.split(':')
+    duration = timedelta(int(day), 0, 0, 0, int(minute), int(hour))
+    dct = { 'user': user, 'console': console, 'logintime': logintime, 'duration': duration }
     return dct
 
 def getstat(db):
@@ -57,13 +54,11 @@ def stat2string(inp):
             resp.append("%s:%s|%s" % (item.get('user', ''), item.get('amount', ''), item.get('duration', '')))
     return ';'.join(resp)
 
-def trimelderrecs(recs, days, curtime = datetime.now()):
+def trimelderrecs(recs, date):
     last = 0
-    delta = timedelta(days)
-    bound_time = curtime - delta
     for rec in recs:
         last += 1
-        if rec['logintime'] < bound_time:
+        if rec['logintime'] < date:
             break
-    return recs[0:last]
+    return recs[0:last-1]
 
