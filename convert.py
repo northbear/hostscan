@@ -3,8 +3,11 @@
 
 import json
 import sys
+import string
 
 from hostdb import HostDB
+
+forder = ['host', 'owner', 'fqdn', 'ip', 'cpu', 'ram', 'hcas', 'user_activity']
 
 def load(fp):
     jsn = {}
@@ -20,16 +23,29 @@ def load(fp):
 def conv2csv(db, fields, outp):
     pass
 
+def killcomma(sdata):
+    if isinstance(sdata, str) or isinstance(sdata, unicode):
+        return string.replace(sdata, ',', '')
+    else:
+        return sdata
+       
+def header():
+    return ', '.join(forder)
+
 def rec2str(rec):
-    return ', '.join([rec.get('owner', ''), rec.get('fqdn', ''), rec.get('ip', ''), rec.get('cpu', ''), rec.get('ram', ''), rec.get('hcas', '')])
+    data = []
+    for fl in forder:
+        data.append(killcomma(rec.get(fl, '')))
+    return ', '.join(data)
 
 def main():
     config = { 'input': sys.stdin, 'output': sys.stdin }
     
     db = load(config['input'])
+    print header()
     for k in db:
         rec = db[k]
-        print ', '.join([k, rec2str(rec)]) 
+        print rec2str(rec)
 
 
 if __name__ == '__main__':
