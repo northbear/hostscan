@@ -14,22 +14,29 @@ class TestHostDB(TestCase):
 
     def test_load_by_filename(self):
         hostdb = HostDB(self.jsn_fname)
-        self.assertIn('hpchead', hostdb.db.keys())
+        self.assertIn('hpchead', hostdb.keys())
 
     def test_load_by_file(self):
         with open(self.jsn_fname) as f:
             hostdb = HostDB(f)
-        self.assertIn('hpchead', hostdb.db.keys())
+        self.assertIn('hpchead', hostdb.keys())
         
     def test_load_by_hostlist(self):
         hostlist = ['host1', 'host2']
         hostdb = HostDB(hostlist)
-        self.assertIn('host2', hostdb.db.keys())
+        self.assertIn('host2', hostdb.keys())
+
+
+    def test_init_by_dict(self):
+        dct = {'hostname': { 'field': 'content' } }
+        hostdb = HostDB(dct)
+        self.assertEqual(hostdb, dct)
 
     def test_select(self):
         hostdb = HostDB(self.jsn_fname)
         query = { 'owner': 'HPC'}
         selected = hostdb.select(query)
+        self.assertIsInstance(selected, HostDB)
         self.assertIn('hpchead', selected.keys()) 
         
 
