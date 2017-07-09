@@ -4,6 +4,7 @@
 from abc import abstractmethod
 from fabric import tasks
 from fabric.api import execute
+from datetime import datetime, timedelta
 
 import fabtask
 from fabtask import QueryType
@@ -18,7 +19,7 @@ class Catcher:
 
     def run(self):
         if self.condition():
-            resp = execute(fabtask.query, self.querystr(), hosts = self._host)
+            resp = execute(fabtask.query, self.querystr(), hosts = [self._host])
             info = self.postprocess(resp[self._host])
             try:
                 self._db.update(info)
@@ -112,9 +113,12 @@ class HostUsers(Catcher):
         rows = reducelastrows(parselastrows(inp))
         rec = []
         for row in rows:
-            rec.append(parselastrecord(row))
-        days = 15
-        stat = getstat(trimelderrecs(rec, 15))
+            try:
+                rec.append(parselastrecord(row))
+            except:
+                print "Error: Cannot parse row: ", row
+        days = timedelta(15)
+        stat = getstat(trimelderrecs(rec, datetime.today()-days))
         return { 'user_activity': stat2string(stat) }
 
 class HostUptime(Catcher):

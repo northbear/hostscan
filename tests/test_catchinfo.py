@@ -23,7 +23,7 @@ class TestHostHCAs(TestCase):
 class TestHostUsers(TestCase):
     def setUp(self):
         self.hostlast = HostUsers('hostname', {})
-        with open('tests/data/last.input') as f:
+        with open('tests/data/last_new.input') as f:
             self.input = f.read()
             
     def test_querystr(self):
@@ -40,5 +40,5 @@ class TestHostUsers(TestCase):
         
     def test_postprocess_content(self):
         resp = self.hostlast.postprocess(self.input)
-        self.assertEqual(resp['user_activity'], 'root:2|0:00:00;others:151|23 days, 0:47:00')
-        
+        self.assertEqual(resp['user_activity'], 'root:0|0:00:00;others:289|56 days, 15:35:00')
+
