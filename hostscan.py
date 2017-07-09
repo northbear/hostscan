@@ -1,12 +1,13 @@
 ##
 ##
 
-from __future__ import print_function
+## from __future__ import print_function
 
 import locale 
 
 from fabric import tasks
 from fabric.api import env
+from fabric.network import ssh
 from fabric.exceptions import NetworkError
 
 from hostdb import HostDB
@@ -16,6 +17,7 @@ import json
 import fabtask
 import catchinfo
 import odcim
+import dcim2devdb
 
 def gatherStats(stats, dbhost):
     pass
@@ -45,6 +47,35 @@ def getowner(devinfo, dept):
                 devdb[it['Label'].lower()] = { 'owner': dept[oid] } 
     return devdb
 
+
+def scanservers(hosts, hostdb):
+    count = 1
+    for hst in hosts:
+        try:
+            print "[%s] count: %s" % (hst, count)
+            tasks.execute(fabtask.statistic, catchinfo.stats, hostdb, hosts=[hst])
+            count += 1
+        except NetworkError as nerr:
+            print("Scanning %s failed. Go for scanning next host" % hst)
+        except EOFError:
+            pass
+        except:
+            print "Error: unknown problem while scanning server %s" % hst
+
+def print_db(db, count):
+    for it in db:
+        print it, db[it] 
+
+def loadDataFromDcim(devicedb):
+    dcim = odcim.DcimApi()
+
+    devices = dcim.devices()
+    depts = dcim.departments()
+
+    converter = dcim2devdb.HostDBFromDcim(devices, depts)
+    converter.produce(devicedb)
+
+
 def main():
 
 
@@ -55,61 +86,50 @@ def main():
     hosts_set = 'test'
     outp_file = 'myfile.json'
 
-    if sys.argv[1] == 'all':
-        hosts_set = 'all'
+    if sys.argv[1] in ['all', 'test', 'dpdk']:
+        hosts_set = sys.argv[1]
+    else:
+        print "Error: wrong hosts set given"
+        exit()
 
     if len(sys.argv) >= 3:
         outp_file = sys.argv[2]
 
 
-    # dcim = odcim.DcimApi()
-    # filter = odcim.FilterInfo()
+    devicedb = HostDB()
 
-    # devinfo = dcim.devices()
-    # deptinfo = dcim.departments()
+    exclude_hosts = ['dev-r-vrt-010', 'dev-r-vrt-011', 'dev-r-vrt-012', 'dev-r-vrt-013', 'dev-r-vrt-100', 'r-ufm89', 'r-aa-fatty10', 'hpc-arm-03', 'r-ufm116', 'r-ole17', 'r-ufm118', 'r-ufm88', 'rsws09', 'dragon7']
 
-    # dept = makedept(deptinfo)
-    # ownerinfo = getowner(devinfo, dept)
-
-
-    exclude_hosts = ['dev-r-vrt-010', 'dev-r-vrt-011', 'dev-r-vrt-012', 'dev-r-vrt-013', 'dev-r-vrt-100', 'r-ufm89', 'r-aa-fatty10', 'hpc-arm-03', 'r-ufm116', 'r-ole17', 'r-ufm118', 'r-ufm88', 'rsws09']
-
-    # print(json_print(dbhost.db))
-    # return
+    loadDataFromDcim(devicedb)
+    serversdb = devicedb.select({ 'type': 'server' })
+    serversdb.remove(exclude_hosts)
 
     ## Configure fabric
     ## env.eagerly_disconnect = True
     ## env.parallel = True
     env.commands = False
     env.user = 'root'
+    ssh.util.log_to_file("/tmp/paramiko.log", 10)
 
     test_hosts = ['hpchead', 'hpc-master', 'r-softiron-01', 'r-ufm189']
 
-    if hosts_set == 'all':
-        # dbhost = HostDB(filter.getServedServers(devinfo))
-        dbhost = HostDB('results/host170620bis.json')
-    else:
+    dbhost = {}
+    if hosts_set == 'test':
         dbhost = HostDB(test_hosts)
-        
-    dbhost.remove(exclude_hosts)
-    # dbhost.update(ownerinfo)
+    elif hosts_set == 'dpdk':
+        dbhost = serversdb.select({ 'owner': 'DPDK'})
+        dbhost.remove(['dragon7'])
+        print 'Process DPDK. Total amount %s servers...' % len(dbhost)
+    elif hosts_set == 'all':
+        dbhost = serversdb
+        dbhost.remove(exclude_hosts)
 
-    # dbhost.store(sys.stdout)
-    # exit()
-
-    host_list = dbhost.db.keys()
+    host_list = dbhost.keys()
+    print "Total amount of servers to scan: %s" % len(host_list)
 
     try:
-        count = 1
-        for hst in host_list:
-            try:
-                print("count: %s" % count)
-                tasks.execute(fabtask.statistic, catchinfo.stats, dbhost.db, hosts=hst)
-                count += 1
-            except NetworkError as nerr:
-                print("Scanning %s failed. Go for scanning next host" % hst)
-            except EOFError:
-                pass
+        scanservers(host_list, dbhost)
+
     finally:
         try:
             with open(outp_file, 'w') as outp:
