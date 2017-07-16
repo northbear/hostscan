@@ -39,7 +39,7 @@ def rec2str(rec):
     return ', '.join(data)
 
 def main():
-    config = { 'input': sys.stdin, 'output': sys.stdin }
+    config = { 'input': sys.stdin, 'output': sys.stdout }
     
     db = load(config['input'])
     print header()
